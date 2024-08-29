@@ -80,7 +80,7 @@ const P = new Pokedex();
 //   console.log("Error: ", JSON.stringify(e));
 // }
 
-import { isTypeItem, TYPE_ITEMS } from "./common/lists.js";
+import { isTypeItem, STATUS, TYPE_ITEMS } from "./common/constants.js";
 
 const mapTypes = (pokemon) => {
   return [
@@ -144,6 +144,7 @@ mappedPokemon.level = 50;
 mappedPokemon.types = mapTypes(pokemon);
 mappedPokemon.stats = mapStats(pokemon);
 mappedPokemon.moves = mapMoves(pokemon);
+mappedPokemon.status = STATUS.NONE;
 console.log(
   isTypeItem(
     mappedPokemon.types[0],
