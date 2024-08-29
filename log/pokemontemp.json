@@ -1,0 +1,62 @@
+{
+  "name": "charmander",
+  "types": ["fire"],
+  "stats": {
+    "hp": 114,
+    "attack": 72,
+    "defense": 63,
+    "special-attack": 80,
+    "special-defense": 70,
+    "speed": 85
+  },
+  "moves": [
+    {
+      "name": "thunder-punch",
+      "type": "electric",
+      "power": 75,
+      "accuracy": 100,
+      "pp": 15,
+      "priority": 0,
+      "damage_class": "physical",
+      "effect_chance": 10,
+      "ailment": { "name": "paralysis", "chance": 10 },
+      "category": "damage+ailment"
+    },
+    {
+      "name": "endure",
+      "type": "normal",
+      "power": null,
+      "accuracy": null,
+      "pp": 10,
+      "priority": 4,
+      "damage_class": "status",
+      "effect_chance": null,
+      "ailment": { "name": "none", "chance": 0 },
+      "category": "unique"
+    },
+    {
+      "name": "metal-claw",
+      "type": "steel",
+      "power": 50,
+      "accuracy": 95,
+      "pp": 35,
+      "priority": 0,
+      "damage_class": "physical",
+      "effect_chance": 10,
+      "ailment": { "name": "none", "chance": 0 },
+      "category": "damage+raise"
+    },
+    {
+      "name": "rest",
+      "type": "psychic",
+      "power": null,
+      "accuracy": null,
+      "pp": 5,
+      "priority": 0,
+      "damage_class": "status",
+      "effect_chance": null,
+      "ailment": { "name": "none", "chance": 0 },
+      "category": "unique"
+    }
+  ]
+}

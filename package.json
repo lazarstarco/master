@@ -1,0 +1,19 @@
+{
+  "name": "implementacija-gray-wolf-optimization-algoritma-u-cilju-definisanja-takmicarskog-tima-pokemona",
+  "version": "1.0.0",
+  "main": "quick.js",
+  "type": "module",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "pokedex-promise-v2": "^4.2.0"
+  }
+}
