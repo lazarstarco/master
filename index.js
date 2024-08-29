@@ -27,21 +27,19 @@ class PokemonTeam {
           break;
       }
     }
-
+    console.log(score);
     return score.win * 3 + score.draw;
   }
 
   crossover(otherTeam) {
-    // Combine parts of two teams to form a new team
-    const newTeam = this.pokemonList
+    const newTeamList = this.pokemonList
       .slice(0, 3)
       .concat(otherTeam.pokemonList.slice(3));
-    return new PokemonTeam(newTeam);
+    return new PokemonTeam(newTeamList);
   }
 
   mutate(pokemonPool) {
-    // Mutate the team by replacing a random Pokémon
-    const idx = Math.floor(Math.random() * 6);
+    const idx = Math.floor(Math.random() * this.pokemonList.length);
     this.pokemonList[idx] =
       pokemonPool[Math.floor(Math.random() * pokemonPool.length)];
   }
@@ -56,20 +54,20 @@ const calculateTypeEffectiveness = (mt, t1, t2) => {
 
   let t = TYPE_CHART[mt];
 
-  if (t.strongVs.includes[t1]) {
+  if (t.strongVs.includes(t1)) {
     m *= 2;
-  } else if (t.weakVs.includes[t1]) {
+  } else if (t.weakVs.includes(t1)) {
     m *= 0.5;
-  } else if (t.noDamageVs.includes[t1]) {
+  } else if (t.noDamageVs.includes(t1)) {
     m *= 0;
   }
 
   if (t2) {
-    if (t.strongVs.includes[t2]) {
+    if (t.strongVs.includes(t2)) {
       m *= 2;
-    } else if (t.weakVs.includes[t2]) {
+    } else if (t.weakVs.includes(t2)) {
       m *= 0.5;
-    } else if (t.noDamageVs.includes[t2]) {
+    } else if (t.noDamageVs.includes(t2)) {
       m *= 0;
     }
   }
@@ -81,13 +79,19 @@ const calculateDamage = (attacker, move, defender) => {
   if (move.power == null) {
     return 0;
   }
-  const isCrit = Math.floor(Math.random() * 10000) < 664; // 664 is a random factor in gen 2
 
+  // Define critical hit calculation
+  const isCrit = Math.floor(Math.random() * 10000) < 664; // Gen 2 factor
+  const critical =
+    !isCrit || ["Flail", "Reversal", "Future Sight"].includes(move.name)
+      ? 1
+      : 2;
+
+  // Triple Kick count
   const getTripleKickCount = () => {
     let val = 1;
     if (Math.random() <= 0.333) {
       val = 2;
-
       if (Math.random() <= 0.333) {
         val = 3;
       }
@@ -106,13 +110,9 @@ const calculateDamage = (attacker, move, defender) => {
   const item = isTypeItem(attacker.types[0], attacker.types[1], attacker.item)
     ? 1.1
     : 1;
-  const critical =
-    !isCrit || ["Flail", "Reversal", "Future Sight"].includes(move.name)
-      ? 1
-      : 2;
-  const tk = (move.name = "Triple Kick" ? getTripleKickCount() : 1);
-  const weather = 1; // simplified
-  const badge = 1; // simplified
+  const tk = move.name === "Triple Kick" ? getTripleKickCount() : 1;
+  const weather = 1; // Simplified
+  const badge = 1; // Simplified
   const STAB = attacker.types.includes(move.type) ? 1.5 : 1;
   const typeEffectiveness = ["Struggle", "Future Sight", "Beat Up"].includes(
     move.name
@@ -123,28 +123,13 @@ const calculateDamage = (attacker, move, defender) => {
         defender.types[0],
         defender.types[1]
       );
-  const moveMod = 1; // simplified
+  const moveMod = 1; // Simplified
   const random = (
     (Math.floor(Math.random() * (255 - 217 + 1)) + 217) /
     255
   ).toFixed(2);
-  const doubleDamage = 1; // simplified
-  console.log(
-    level,
-    power,
-    attack,
-    defense,
-    item,
-    critical,
-    tk,
-    weather,
-    badge,
-    STAB,
-    typeEffectiveness,
-    moveMod,
-    random,
-    doubleDamage
-  );
+  const doubleDamage = 1; // Simplified
+
   return Math.floor(
     (((((2 * level) / 5 + 2) * power * attack) / defense / 50) *
       item *
@@ -161,38 +146,90 @@ const calculateDamage = (attacker, move, defender) => {
   );
 };
 
-const battle = (team1, team2) => {
-  const team1Pokemon = team1.map((pokemon) => ({ ...pokemon }));
-  const team2Pokemon = team2.map((pokemon) => ({ ...pokemon }));
+const deepCopyPokemon = (pokemon) => ({
+  ...pokemon,
+  stats: { ...pokemon.stats },
+  moves: pokemon.moves.map((move) => ({ ...move })),
+});
 
+const battle = (team1, team2) => {
+  // Create deep copies of teams to ensure the original teams remain unmodified
+  const team1Pokemon = team1.map(deepCopyPokemon);
+  const team2Pokemon = team2.map(deepCopyPokemon);
+
+  const handleStatusEffects = (pokemon) => {
+    const statusChanceMap = {
+      [STATUS.FREEZE]: 0.1,
+      [STATUS.PARALYSIS]: 0.25,
+      [STATUS.SLEEP]: 0.33,
+    };
+
+    if (
+      statusChanceMap[pokemon.status] &&
+      Math.random() < statusChanceMap[pokemon.status]
+    ) {
+      pokemon.status = STATUS.NONE;
+    }
+
+    if ([STATUS.BURN, STATUS.POISON].includes(pokemon.status)) {
+      pokemon.stats.hp -= Math.floor(pokemon.stats.hp / 8);
+      pokemon.stats.hp = Math.max(pokemon.stats.hp, 0); // Ensure HP doesn't go below 0
+    }
+  };
+
+  const performAttack = (attacker, defender) => {
+    if ([STATUS.NONE, STATUS.BURN, STATUS.POISON].includes(attacker.status)) {
+      const move =
+        attacker.moves[Math.floor(Math.random() * attacker.moves.length)];
+      if (
+        Object.values(STATUS).includes(move.ailment.name) &&
+        defender.status === STATUS.NONE &&
+        (Math.random() < move.ailment.chance / 100 || move.ailment.chance === 0)
+      ) {
+        defender.status = move.ailment.name;
+      }
+      const damage = calculateDamage(attacker, move, defender);
+      defender.stats.hp -= Math.max(damage, 0);
+    }
+  };
+
+  let turn = 0;
   while (team1Pokemon.length > 0 && team2Pokemon.length > 0) {
-    const team1Active = team1Pokemon[0];
-    const team2Active = team2Pokemon[0];
+    if (turn++ > 20000) {
+      // fs.writeFileSync("./log/too_many_moves.json", JSON.stringify([team1Pokemon, team2Pokemon])); // Write only the Pokémon lists
+      break;
+    }
+    let team1Active = team1Pokemon[0];
+    let team2Active = team2Pokemon[0];
 
     // Team 1 attacks
-    const team1Move = team1Active.moves[Math.floor(Math.random() * 4)];
-    const team1Damage = calculateDamage(team1Active, team1Move, team2Active);
-    team2Active.stats.hp -= team1Damage;
+    handleStatusEffects(team1Active);
+    if (team1Active.stats.hp > 0) {
+      performAttack(team1Active, team2Active);
+    }
 
     if (team2Active.stats.hp <= 0) {
-      team2 = team2Pokemon.slice(1);
-      if (team2.length === 0) {
-        return BATTLE_STATUS.WIN;
+      team2Pokemon.shift();
+      if (team2Pokemon.length > 0) {
+        team2Active = pickNewActive(team2Pokemon, team1Active);
+      } else {
+        break;
       }
-      team2 = pickNewActive(team2Pokemon, team1Active);
     }
 
     // Team 2 attacks
-    const team2Move = team2Active.moves[Math.floor(Math.random() * 4)];
-    const team2Damage = calculateDamage(team2Active, team2Move, team1Active);
-    team1Active.stats.hp -= team2Damage;
+    handleStatusEffects(team2Active);
+    if (team2Active.stats.hp > 0) {
+      performAttack(team2Active, team1Active);
+    }
 
     if (team1Active.stats.hp <= 0) {
-      team1 = team1Pokemon.slice(1);
-      if (team1.length === 0) {
-        return BATTLE_STATUS.LOSS;
+      team1Pokemon.shift();
+      if (team1Pokemon.length > 0) {
+        team1Active = pickNewActive(team1Pokemon, team2Active);
+      } else {
+        break;
       }
-      team1 = pickNewActive(team2Pokemon, team1Active);
     }
   }
 
@@ -239,11 +276,11 @@ const mapStats = (pokemon) => {
 
 const mapMoves = (pokemon) => {
   const allMoves = JSON.parse(
-    fs.readFileSync("./log/moves_from_gen_ii_trimmed.json", {
+    fs.readFileSync("./common/moves_from_gen_ii_trimmed.json", {
       encoding: "utf8",
     })
   );
-  return allMoves
+  const filteredMoves = allMoves
     .filter((move) => pokemon.moves.map((m) => m.move.name).includes(move.name))
     .map((m) => {
       return {
@@ -258,8 +295,11 @@ const mapMoves = (pokemon) => {
         category: m.meta.category.name,
       };
     })
-    .sort(() => 0.5 - Math.random())
-    .slice(0, 4);
+    .sort(() => 0.5 - Math.random());
+  return filteredMoves.slice(
+    0,
+    filteredMoves.length > 4 ? 4 : filteredMoves.length
+  );
 };
 
 function mapPokemon(pokemon) {
@@ -278,7 +318,7 @@ function mapPokemon(pokemon) {
 function fetchPokemonData() {
   // Fetch Pokémon data from an external source
   const allPokemon = JSON.parse(
-    fs.readFileSync("./log/pokemon_from_gens_i_and_ii_trimmed.json", {
+    fs.readFileSync("./common/pokemon_from_gens_i_and_ii_trimmed.json", {
       encoding: "utf-8",
     })
   );
@@ -292,7 +332,7 @@ function generateRandomTeam(pokemonPool) {
   return new PokemonTeam(shuffledPool.slice(0, 6));
 }
 
-function gwoOptimization(pokemonPool, numTeams, maxIterations) {
+const gwoOptimization = (pokemonPool, numTeams, maxIterations) => {
   let a = 2; // GWO parameter
   let alphaTeam, betaTeam, deltaTeam;
 
@@ -300,7 +340,12 @@ function gwoOptimization(pokemonPool, numTeams, maxIterations) {
   const teams = Array.from({ length: numTeams }, () =>
     generateRandomTeam(pokemonPool)
   );
-  // fs.writeFileSync("./log/teams.json", JSON.stringify(teams));
+
+  // fs.writeFileSync(
+  //   "./log/teams.json",
+  //   JSON.stringify(teams.map((team) => team.pokemonList))
+  // ); // Write only the Pokémon lists
+
   let fitnessScores = new Array(numTeams).fill(0);
 
   for (let iteration = 0; iteration < maxIterations; iteration++) {
@@ -349,13 +394,19 @@ function gwoOptimization(pokemonPool, numTeams, maxIterations) {
 
     // Decrease the parameter 'a'
     a = 2 - iteration * (2 / maxIterations);
+
+    console.log(
+      `Iteration ${
+        iteration + 1
+      }: Fitness scores: ${fitnessScores}, Alpha team: ${alphaTeam.pokemonList}`
+    );
   }
 
   // Return the best team (alpha team)
   return alphaTeam;
-}
+};
+
 // Define your Pokémon pool
-// const pokemonPool = Array.from({ length: 200 }, (_, i) => `Pokemon_${i + 1}`);
 const pokemonPool = fetchPokemonData();
 
 const numTeams = 100; // Number of teams

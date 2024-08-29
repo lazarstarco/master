@@ -1,0 +1,682 @@
+[
+  [
+    {
+      "name": "metapod",
+      "level": 50,
+      "types": ["bug"],
+      "stats": {
+        "hp": 125,
+        "attack": 40,
+        "defense": 75,
+        "special-attack": 45,
+        "special-defense": 45,
+        "speed": 50
+      },
+      "moves": [
+        {
+          "name": "string-shot",
+          "type": "bug",
+          "power": null,
+          "accuracy": 95,
+          "priority": 0,
+          "damage_class": "status",
+          "effect_chance": null,
+          "ailment": { "name": "none", "chance": 0 },
+          "category": "net-good-stats"
+        },
+        {
+          "name": "harden",
+          "type": "normal",
+          "power": null,
+          "accuracy": null,
+          "priority": 0,
+          "damage_class": "status",
+          "effect_chance": null,
+          "ailment": { "name": "none", "chance": 0 },
+          "category": "net-good-stats"
+        }
+      ],
+      "status": "none"
+    },
+    {
+      "name": "dragonair",
+      "level": 50,
+      "types": ["dragon"],
+      "stats": {
+        "hp": 136,
+        "attack": 104,
+        "defense": 85,
+        "special-attack": 90,
+        "special-defense": 90,
+        "speed": 90
+      },
+      "moves": [
+        {
+          "name": "flamethrower",
+          "type": "fire",
+          "power": 90,
+          "accuracy": 100,
+          "priority": 0,
+          "damage_class": "special",
+          "effect_chance": 10,
+          "ailment": { "name": "burn", "chance": 10 },
+          "category": "damage+ailment"
+        },
+        {
+          "name": "attract",
+          "type": "normal",
+          "power": null,
+          "accuracy": 100,
+          "priority": 0,
+          "damage_class": "status",
+          "effect_chance": null,
+          "ailment": { "name": "infatuation", "chance": 0 },
+          "category": "ailment"
+        },
+        {
+          "name": "endure",
+          "type": "normal",
+          "power": null,
+          "accuracy": null,
+          "priority": 4,
+          "damage_class": "status",
+          "effect_chance": null,
+          "ailment": { "name": "none", "chance": 0 },
+          "category": "unique"
+        },
+        {
+          "name": "swift",
+          "type": "normal",
+          "power": 60,
+          "accuracy": null,
+          "priority": 0,
+          "damage_class": "special",
+          "effect_chance": null,
+          "ailment": { "name": "none", "chance": 0 },
+          "category": "damage"
+        }
+      ],
+      "status": "none"
+    },
+    {
+      "name": "stantler",
+      "level": 50,
+      "types": ["normal"],
+      "stats": {
+        "hp": 148,
+        "attack": 115,
+        "defense": 82,
+        "special-attack": 105,
+        "special-defense": 85,
+        "speed": 105
+      },
+      "moves": [
+        {
+          "name": "dream-eater",
+          "type": "psychic",
+          "power": 100,
+          "accuracy": 100,
+          "priority": 0,
+          "damage_class": "special",
+          "effect_chance": null,
+          "ailment": { "name": "none", "chance": 0 },
+          "category": "damage+heal"
+        },
+        {
+          "name": "nightmare",
+          "type": "ghost",
+          "power": null,
+          "accuracy": 100,
+          "priority": 0,
+          "damage_class": "status",
+          "effect_chance": null,
+          "ailment": { "name": "nightmare", "chance": 0 },
+          "category": "ailment"
+        },
+        {
+          "name": "rain-dance",
+          "type": "water",
+          "power": null,
+          "accuracy": null,
+          "priority": 0,
+          "damage_class": "status",
+          "effect_chance": null,
+          "ailment": { "name": "none", "chance": 0 },
+          "category": "whole-field-effect"
+        },
+        {
+          "name": "future-sight",
+          "type": "psychic",
+          "power": 120,
+          "accuracy": 100,
+          "priority": 0,
+          "damage_class": "special",
+          "effect_chance": null,
+          "ailment": { "name": "none", "chance": 0 },
+          "category": "unique"
+        }
+      ],
+      "status": "none"
+    },
+    {
+      "name": "delibird",
+      "level": 50,
+      "types": ["ice", "flying"],
+      "stats": {
+        "hp": 120,
+        "attack": 75,
+        "defense": 65,
+        "special-attack": 85,
+        "special-defense": 65,
+        "speed": 95
+      },
+      "moves": [
+        {
+          "name": "sleep-talk",
+          "type": "normal",
+          "power": null,
+          "accuracy": null,
+          "priority": 0,
+          "damage_class": "status",
+          "effect_chance": null,
+          "ailment": { "name": "none", "chance": 0 },
+          "category": "unique"
+        },
+        {
+          "name": "attract",
+          "type": "normal",
+          "power": null,
+          "accuracy": 100,
+          "priority": 0,
+          "damage_class": "status",
+          "effect_chance": null,
+          "ailment": { "name": "infatuation", "chance": 0 },
+          "category": "ailment"
+        },
+        {
+          "name": "frustration",
+          "type": "normal",
+          "power": null,
+          "accuracy": 100,
+          "priority": 0,
+          "damage_class": "physical",
+          "effect_chance": null,
+          "ailment": { "name": "none", "chance": 0 },
+          "category": "damage"
+        },
+        {
+          "name": "drill-peck",
+          "type": "flying",
+          "power": 80,
+          "accuracy": 100,
+          "priority": 0,
+          "damage_class": "physical",
+          "effect_chance": null,
+          "ailment": { "name": "none", "chance": 0 },
+          "category": "damage"
+        }
+      ],
+      "status": "none"
+    },
+    {
+      "name": "arcanine",
+      "level": 50,
+      "types": ["fire"],
+      "stats": {
+        "hp": 165,
+        "attack": 130,
+        "defense": 100,
+        "special-attack": 120,
+        "special-defense": 100,
+        "speed": 115
+      },
+      "moves": [
+        {
+          "name": "bite",
+          "type": "dark",
+          "power": 60,
+          "accuracy": 100,
+          "priority": 0,
+          "damage_class": "physical",
+          "effect_chance": 30,
+          "ailment": { "name": "none", "chance": 0 },
+          "category": "damage"
+        },
+        {
+          "name": "dragon-rage",
+          "type": "dragon",
+          "power": null,
+          "accuracy": 100,
+          "priority": 0,
+          "damage_class": "special",
+          "effect_chance": null,
+          "ailment": { "name": "none", "chance": 0 },
+          "category": "damage"
+        },
+        {
+          "name": "solar-beam",
+          "type": "grass",
+          "power": 120,
+          "accuracy": 100,
+          "priority": 0,
+          "damage_class": "special",
+          "effect_chance": null,
+          "ailment": { "name": "none", "chance": 0 },
+          "category": "damage"
+        },
+        {
+          "name": "headbutt",
+          "type": "normal",
+          "power": 70,
+          "accuracy": 100,
+          "priority": 0,
+          "damage_class": "physical",
+          "effect_chance": 30,
+          "ailment": { "name": "none", "chance": 0 },
+          "category": "damage"
+        }
+      ],
+      "status": "none"
+    },
+    {
+      "name": "slowpoke",
+      "level": 50,
+      "types": ["water", "psychic"],
+      "stats": {
+        "hp": 165,
+        "attack": 85,
+        "defense": 85,
+        "special-attack": 60,
+        "special-defense": 60,
+        "speed": 35
+      },
+      "moves": [
+        {
+          "name": "headbutt",
+          "type": "normal",
+          "power": 70,
+          "accuracy": 100,
+          "priority": 0,
+          "damage_class": "physical",
+          "effect_chance": 30,
+          "ailment": { "name": "none", "chance": 0 },
+          "category": "damage"
+        },
+        {
+          "name": "psybeam",
+          "type": "psychic",
+          "power": 65,
+          "accuracy": 100,
+          "priority": 0,
+          "damage_class": "special",
+          "effect_chance": 10,
+          "ailment": { "name": "confusion", "chance": 10 },
+          "category": "damage+ailment"
+        },
+        {
+          "name": "psych-up",
+          "type": "normal",
+          "power": null,
+          "accuracy": null,
+          "priority": 0,
+          "damage_class": "status",
+          "effect_chance": null,
+          "ailment": { "name": "none", "chance": 0 },
+          "category": "unique"
+        },
+        {
+          "name": "take-down",
+          "type": "normal",
+          "power": 90,
+          "accuracy": 85,
+          "priority": 0,
+          "damage_class": "physical",
+          "effect_chance": null,
+          "ailment": { "name": "none", "chance": 0 },
+          "category": "damage"
+        }
+      ],
+      "status": "none"
+    }
+  ],
+  [
+    {
+      "name": "metapod",
+      "level": 50,
+      "types": ["bug"],
+      "stats": {
+        "hp": 125,
+        "attack": 40,
+        "defense": 75,
+        "special-attack": 45,
+        "special-defense": 45,
+        "speed": 50
+      },
+      "moves": [
+        {
+          "name": "string-shot",
+          "type": "bug",
+          "power": null,
+          "accuracy": 95,
+          "priority": 0,
+          "damage_class": "status",
+          "effect_chance": null,
+          "ailment": { "name": "none", "chance": 0 },
+          "category": "net-good-stats"
+        },
+        {
+          "name": "harden",
+          "type": "normal",
+          "power": null,
+          "accuracy": null,
+          "priority": 0,
+          "damage_class": "status",
+          "effect_chance": null,
+          "ailment": { "name": "none", "chance": 0 },
+          "category": "net-good-stats"
+        }
+      ],
+      "status": "none"
+    },
+    {
+      "name": "gastly",
+      "level": 50,
+      "types": ["ghost", "poison"],
+      "stats": {
+        "hp": 105,
+        "attack": 55,
+        "defense": 50,
+        "special-attack": 120,
+        "special-defense": 55,
+        "speed": 100
+      },
+      "moves": [
+        {
+          "name": "fire-punch",
+          "type": "fire",
+          "power": 75,
+          "accuracy": 100,
+          "priority": 0,
+          "damage_class": "physical",
+          "effect_chance": 10,
+          "ailment": { "name": "burn", "chance": 10 },
+          "category": "damage+ailment"
+        },
+        {
+          "name": "confuse-ray",
+          "type": "ghost",
+          "power": null,
+          "accuracy": 100,
+          "priority": 0,
+          "damage_class": "status",
+          "effect_chance": null,
+          "ailment": { "name": "confusion", "chance": 0 },
+          "category": "ailment"
+        },
+        {
+          "name": "haze",
+          "type": "ice",
+          "power": null,
+          "accuracy": null,
+          "priority": 0,
+          "damage_class": "status",
+          "effect_chance": null,
+          "ailment": { "name": "none", "chance": 0 },
+          "category": "whole-field-effect"
+        },
+        {
+          "name": "thunderbolt",
+          "type": "electric",
+          "power": 90,
+          "accuracy": 100,
+          "priority": 0,
+          "damage_class": "special",
+          "effect_chance": 10,
+          "ailment": { "name": "paralysis", "chance": 10 },
+          "category": "damage+ailment"
+        }
+      ],
+      "status": "none"
+    },
+    {
+      "name": "forretress",
+      "level": 50,
+      "types": ["bug", "steel"],
+      "stats": {
+        "hp": 150,
+        "attack": 110,
+        "defense": 160,
+        "special-attack": 80,
+        "special-defense": 80,
+        "speed": 60
+      },
+      "moves": [
+        {
+          "name": "dig",
+          "type": "ground",
+          "power": 80,
+          "accuracy": 100,
+          "priority": 0,
+          "damage_class": "physical",
+          "effect_chance": null,
+          "ailment": { "name": "none", "chance": 0 },
+          "category": "damage"
+        },
+        {
+          "name": "toxic",
+          "type": "poison",
+          "power": null,
+          "accuracy": 90,
+          "priority": 0,
+          "damage_class": "status",
+          "effect_chance": null,
+          "ailment": { "name": "poison", "chance": 0 },
+          "category": "ailment"
+        },
+        {
+          "name": "return",
+          "type": "normal",
+          "power": null,
+          "accuracy": 100,
+          "priority": 0,
+          "damage_class": "physical",
+          "effect_chance": null,
+          "ailment": { "name": "none", "chance": 0 },
+          "category": "damage"
+        },
+        {
+          "name": "take-down",
+          "type": "normal",
+          "power": 90,
+          "accuracy": 85,
+          "priority": 0,
+          "damage_class": "physical",
+          "effect_chance": null,
+          "ailment": { "name": "none", "chance": 0 },
+          "category": "damage"
+        }
+      ],
+      "status": "none"
+    },
+    {
+      "name": "aipom",
+      "level": 50,
+      "types": ["normal"],
+      "stats": {
+        "hp": 130,
+        "attack": 90,
+        "defense": 75,
+        "special-attack": 60,
+        "special-defense": 75,
+        "speed": 105
+      },
+      "moves": [
+        {
+          "name": "double-slap",
+          "type": "normal",
+          "power": 15,
+          "accuracy": 85,
+          "priority": 0,
+          "damage_class": "physical",
+          "effect_chance": null,
+          "ailment": { "name": "none", "chance": 0 },
+          "category": "damage"
+        },
+        {
+          "name": "scratch",
+          "type": "normal",
+          "power": 40,
+          "accuracy": 100,
+          "priority": 0,
+          "damage_class": "physical",
+          "effect_chance": null,
+          "ailment": { "name": "none", "chance": 0 },
+          "category": "damage"
+        },
+        {
+          "name": "agility",
+          "type": "psychic",
+          "power": null,
+          "accuracy": null,
+          "priority": 0,
+          "damage_class": "status",
+          "effect_chance": null,
+          "ailment": { "name": "none", "chance": 0 },
+          "category": "net-good-stats"
+        },
+        {
+          "name": "nightmare",
+          "type": "ghost",
+          "power": null,
+          "accuracy": 100,
+          "priority": 0,
+          "damage_class": "status",
+          "effect_chance": null,
+          "ailment": { "name": "nightmare", "chance": 0 },
+          "category": "ailment"
+        }
+      ],
+      "status": "none"
+    },
+    {
+      "name": "granbull",
+      "level": 50,
+      "types": ["normal"],
+      "stats": {
+        "hp": 165,
+        "attack": 140,
+        "defense": 95,
+        "special-attack": 80,
+        "special-defense": 80,
+        "speed": 65
+      },
+      "moves": [
+        {
+          "name": "rock-slide",
+          "type": "rock",
+          "power": 75,
+          "accuracy": 90,
+          "priority": 0,
+          "damage_class": "physical",
+          "effect_chance": 30,
+          "ailment": { "name": "none", "chance": 0 },
+          "category": "damage"
+        },
+        {
+          "name": "mimic",
+          "type": "normal",
+          "power": null,
+          "accuracy": null,
+          "priority": 0,
+          "damage_class": "status",
+          "effect_chance": null,
+          "ailment": { "name": "none", "chance": 0 },
+          "category": "unique"
+        },
+        {
+          "name": "tackle",
+          "type": "normal",
+          "power": 40,
+          "accuracy": 100,
+          "priority": 0,
+          "damage_class": "physical",
+          "effect_chance": null,
+          "ailment": { "name": "none", "chance": 0 },
+          "category": "damage"
+        },
+        {
+          "name": "solar-beam",
+          "type": "grass",
+          "power": 120,
+          "accuracy": 100,
+          "priority": 0,
+          "damage_class": "special",
+          "effect_chance": null,
+          "ailment": { "name": "none", "chance": 0 },
+          "category": "damage"
+        }
+      ],
+      "status": "none"
+    },
+    {
+      "name": "dunsparce",
+      "level": 50,
+      "types": ["normal"],
+      "stats": {
+        "hp": 175,
+        "attack": 90,
+        "defense": 90,
+        "special-attack": 85,
+        "special-defense": 85,
+        "speed": 65
+      },
+      "moves": [
+        {
+          "name": "headbutt",
+          "type": "normal",
+          "power": 70,
+          "accuracy": 100,
+          "priority": 0,
+          "damage_class": "physical",
+          "effect_chance": 30,
+          "ailment": { "name": "none", "chance": 0 },
+          "category": "damage"
+        },
+        {
+          "name": "toxic",
+          "type": "poison",
+          "power": null,
+          "accuracy": 90,
+          "priority": 0,
+          "damage_class": "status",
+          "effect_chance": null,
+          "ailment": { "name": "poison", "chance": 0 },
+          "category": "ailment"
+        },
+        {
+          "name": "flail",
+          "type": "normal",
+          "power": null,
+          "accuracy": 100,
+          "priority": 0,
+          "damage_class": "physical",
+          "effect_chance": null,
+          "ailment": { "name": "none", "chance": 0 },
+          "category": "damage"
+        },
+        {
+          "name": "screech",
+          "type": "normal",
+          "power": null,
+          "accuracy": 85,
+          "priority": 0,
+          "damage_class": "status",
+          "effect_chance": null,
+          "ailment": { "name": "none", "chance": 0 },
+          "category": "net-good-stats"
+        }
+      ],
+      "status": "none"
+    }
+  ]
+]
