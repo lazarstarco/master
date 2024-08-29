@@ -15,7 +15,8 @@ class PokemonTeam {
   fitness(opponentTeams) {
     const score = { win: 0, draw: 0, loss: 0 };
     for (const opponentTeam of opponentTeams) {
-      switch (battle(this.pokemonList, opponentTeam.pokemonList)) {
+      const result = battle(this.pokemonList, opponentTeam.pokemonList);
+      switch (result) {
         case BATTLE_STATUS.WIN:
           score.win++;
           break;
@@ -33,8 +34,8 @@ class PokemonTeam {
 
   crossover(otherTeam) {
     const newTeamList = this.pokemonList
-      .slice(0, 3)
-      .concat(otherTeam.pokemonList.slice(3));
+      .slice(0, 3) // First half from this team
+      .concat(otherTeam.pokemonList.slice(3)); // Second half from the other team
     return new PokemonTeam(newTeamList);
   }
 
@@ -46,57 +47,47 @@ class PokemonTeam {
 }
 
 const calculateTypeEffectiveness = (mt, t1, t2) => {
-  if (!mt) {
-    return 1.0;
-  }
+  if (!mt) return 1.0;
 
-  let m = 1.0;
+  let multiplier = 1.0;
+  const typeData = TYPE_CHART[mt];
 
-  let t = TYPE_CHART[mt];
-
-  if (t.strongVs.includes(t1)) {
-    m *= 2;
-  } else if (t.weakVs.includes(t1)) {
-    m *= 0.5;
-  } else if (t.noDamageVs.includes(t1)) {
-    m *= 0;
+  if (typeData.strongVs.includes(t1)) {
+    multiplier *= 2;
+  } else if (typeData.weakVs.includes(t1)) {
+    multiplier *= 0.5;
+  } else if (typeData.noDamageVs.includes(t1)) {
+    multiplier *= 0;
   }
 
   if (t2) {
-    if (t.strongVs.includes(t2)) {
-      m *= 2;
-    } else if (t.weakVs.includes(t2)) {
-      m *= 0.5;
-    } else if (t.noDamageVs.includes(t2)) {
-      m *= 0;
+    if (typeData.strongVs.includes(t2)) {
+      multiplier *= 2;
+    } else if (typeData.weakVs.includes(t2)) {
+      multiplier *= 0.5;
+    } else if (typeData.noDamageVs.includes(t2)) {
+      multiplier *= 0;
     }
   }
 
-  return m;
+  return multiplier;
 };
 
 const calculateDamage = (attacker, move, defender) => {
-  if (move.power == null) {
-    return 0;
-  }
+  if (move.power == null) return 0;
 
-  // Define critical hit calculation
-  const isCrit = Math.floor(Math.random() * 10000) < 664; // Gen 2 factor
-  const critical =
-    !isCrit || ["Flail", "Reversal", "Future Sight"].includes(move.name)
-      ? 1
-      : 2;
+  const isCritical = Math.floor(Math.random() * 10000) < 664; // Gen 2 critical hit chance
+  const criticalMultiplier =
+    isCritical && !["Flail", "Reversal", "Future Sight"].includes(move.name)
+      ? 2
+      : 1;
 
-  // Triple Kick count
+  // Function to determine the number of hits for Triple Kick
   const getTripleKickCount = () => {
-    let val = 1;
     if (Math.random() <= 0.333) {
-      val = 2;
-      if (Math.random() <= 0.333) {
-        val = 3;
-      }
+      return Math.random() <= 0.333 ? 3 : 2;
     }
-    return val;
+    return 1;
   };
 
   const level = attacker.level;
@@ -107,13 +98,17 @@ const calculateDamage = (attacker, move, defender) => {
   const defense = isPhysical(move.type)
     ? defender.stats["defense"]
     : defender.stats["special-defense"];
-  const item = isTypeItem(attacker.types[0], attacker.types[1], attacker.item)
+  const itemMultiplier = isTypeItem(
+    attacker.types[0],
+    attacker.types[1],
+    attacker.item
+  )
     ? 1.1
     : 1;
-  const tk = move.name === "Triple Kick" ? getTripleKickCount() : 1;
-  const weather = 1; // Simplified
-  const badge = 1; // Simplified
-  const STAB = attacker.types.includes(move.type) ? 1.5 : 1;
+  const tripleKickHits = move.name === "Triple Kick" ? getTripleKickCount() : 1;
+  const weatherMultiplier = 1; // Simplified
+  const badgeMultiplier = 1; // Simplified
+  const stabMultiplier = attacker.types.includes(move.type) ? 1.5 : 1;
   const typeEffectiveness = ["Struggle", "Future Sight", "Beat Up"].includes(
     move.name
   )
@@ -123,26 +118,26 @@ const calculateDamage = (attacker, move, defender) => {
         defender.types[0],
         defender.types[1]
       );
-  const moveMod = 1; // Simplified
-  const random = (
+  const moveMultiplier = 1; // Simplified
+  const randomMultiplier = (
     (Math.floor(Math.random() * (255 - 217 + 1)) + 217) /
     255
   ).toFixed(2);
-  const doubleDamage = 1; // Simplified
+  const doubleDamageMultiplier = 1; // Simplified
 
   return Math.floor(
     (((((2 * level) / 5 + 2) * power * attack) / defense / 50) *
-      item *
-      critical +
+      itemMultiplier *
+      criticalMultiplier +
       2) *
-      tk *
-      weather *
-      badge *
-      STAB *
+      tripleKickHits *
+      weatherMultiplier *
+      badgeMultiplier *
+      stabMultiplier *
       typeEffectiveness *
-      moveMod *
-      random *
-      doubleDamage
+      moveMultiplier *
+      randomMultiplier *
+      doubleDamageMultiplier
   );
 };
 
@@ -154,8 +149,8 @@ const deepCopyPokemon = (pokemon) => ({
 
 const battle = (team1, team2) => {
   // Create deep copies of teams to ensure the original teams remain unmodified
-  const team1Pokemon = team1.map(deepCopyPokemon);
-  const team2Pokemon = team2.map(deepCopyPokemon);
+  let team1Pokemon = team1.map(deepCopyPokemon);
+  let team2Pokemon = team2.map(deepCopyPokemon);
 
   const handleStatusEffects = (pokemon) => {
     const statusChanceMap = {
@@ -164,6 +159,7 @@ const battle = (team1, team2) => {
       [STATUS.SLEEP]: 0.33,
     };
 
+    // Handle status recovery
     if (
       statusChanceMap[pokemon.status] &&
       Math.random() < statusChanceMap[pokemon.status]
@@ -171,16 +167,15 @@ const battle = (team1, team2) => {
       pokemon.status = STATUS.NONE;
     }
 
+    // Handle status damage
     if ([STATUS.BURN, STATUS.POISON].includes(pokemon.status)) {
       pokemon.stats.hp -= Math.floor(pokemon.stats.hp / 8);
       pokemon.stats.hp = Math.max(pokemon.stats.hp, 0); // Ensure HP doesn't go below 0
     }
   };
 
-  const performAttack = (attacker, defender) => {
+  const performAttack = (attacker, move, defender) => {
     if ([STATUS.NONE, STATUS.BURN, STATUS.POISON].includes(attacker.status)) {
-      const move =
-        attacker.moves[Math.floor(Math.random() * attacker.moves.length)];
       if (
         Object.values(STATUS).includes(move.ailment.name) &&
         defender.status === STATUS.NONE &&
@@ -193,42 +188,94 @@ const battle = (team1, team2) => {
     }
   };
 
+  const determineAttackOrder = (pokemon1, pokemon2, move1, move2) => {
+    if (move1.priority > move2.priority) {
+      return pokemon1;
+    } else if (move2.priority > move1.priority) {
+      return pokemon2;
+    } else {
+      // If priorities are tied, use speed
+      return pokemon1.stats.speed > pokemon2.stats.speed ? pokemon1 : pokemon2;
+    }
+  };
+
   let turn = 0;
   while (team1Pokemon.length > 0 && team2Pokemon.length > 0) {
     if (turn++ > 20000) {
       // fs.writeFileSync("./log/too_many_moves.json", JSON.stringify([team1Pokemon, team2Pokemon])); // Write only the Pokémon lists
       break;
     }
-    let team1Active = team1Pokemon[0];
-    let team2Active = team2Pokemon[0];
 
-    // Team 1 attacks
-    handleStatusEffects(team1Active);
-    if (team1Active.stats.hp > 0) {
-      performAttack(team1Active, team2Active);
+    const team1Active = team1Pokemon[0];
+    const team2Active = team2Pokemon[0];
+
+    // Select random moves for both active Pokémon
+    const team1Move =
+      team1Active.moves[Math.floor(Math.random() * team1Active.moves.length)];
+    const team2Move =
+      team2Active.moves[Math.floor(Math.random() * team2Active.moves.length)];
+
+    // Determine which Pokémon attacks first
+    const firstAttacker = determineAttackOrder(
+      team1Active,
+      team2Active,
+      team1Move,
+      team2Move
+    );
+    const secondAttacker =
+      firstAttacker === team1Active ? team2Active : team1Active;
+    const firstMove = firstAttacker === team1Active ? team1Move : team2Move;
+    const secondMove = firstAttacker === team1Active ? team2Move : team1Move;
+
+    // Perform first attack
+    handleStatusEffects(firstAttacker);
+    if (firstAttacker.stats.hp > 0) {
+      performAttack(firstAttacker, firstMove, secondAttacker);
     }
 
-    if (team2Active.stats.hp <= 0) {
-      team2Pokemon.shift();
-      if (team2Pokemon.length > 0) {
-        team2Active = pickNewActive(team2Pokemon, team1Active);
+    // Check if the second attacker has fainted
+    if (secondAttacker.stats.hp <= 0) {
+      if (secondAttacker === team2Active) {
+        team2Pokemon.shift();
+        if (team2Pokemon.length > 0) {
+          team2Pokemon = pickNewActive(team2Pokemon, team1Active);
+        } else {
+          break;
+        }
       } else {
-        break;
+        team1Pokemon.shift();
+        if (team1Pokemon.length > 0) {
+          team1Pokemon = pickNewActive(team1Pokemon, team2Active);
+        } else {
+          break;
+        }
       }
+      // Skip the second attack if the second attacker has fainted
+      continue;
     }
 
-    // Team 2 attacks
-    handleStatusEffects(team2Active);
-    if (team2Active.stats.hp > 0) {
-      performAttack(team2Active, team1Active);
+    // Perform second attack
+    handleStatusEffects(secondAttacker);
+    if (secondAttacker.stats.hp > 0) {
+      performAttack(secondAttacker, secondMove, firstAttacker);
     }
 
-    if (team1Active.stats.hp <= 0) {
-      team1Pokemon.shift();
-      if (team1Pokemon.length > 0) {
-        team1Active = pickNewActive(team1Pokemon, team2Active);
+    // Check if the first attacker has fainted
+    if (firstAttacker.stats.hp <= 0) {
+      if (firstAttacker === team2Active) {
+        team2Pokemon.shift();
+        if (team2Pokemon.length > 0) {
+          team2Pokemon = pickNewActive(team2Pokemon, team1Active);
+        } else {
+          break;
+        }
       } else {
-        break;
+        team1Pokemon.shift();
+        if (team1Pokemon.length > 0) {
+          team1Pokemon = pickNewActive(team1Pokemon, team2Active);
+        } else {
+          break;
+        }
       }
     }
   }
@@ -253,7 +300,7 @@ const pickNewActive = (team, active) => {
         ) >
       calculateTypeEffectiveness(b.types[0], active.types[0], active.types[1]) +
         calculateTypeEffectiveness(b.types[1], active.types[0], active.types[1])
-  )[0];
+  );
 };
 
 const mapTypes = (pokemon) => {
@@ -265,8 +312,8 @@ const mapTypes = (pokemon) => {
 
 const mapStats = (pokemon) => {
   return pokemon.stats.reduce((acc, stat) => {
-    // 31 - max iv
-    // 50 - lvl
+    // Calculate stats at level 50
+    // Use max IVs for simplicity
     const statAtLvl50 = Math.floor(((2 * stat.base_stat + 31) * 50) / 100);
     acc[stat.stat.name] =
       stat.stat.name == "hp" ? statAtLvl50 + 50 + 10 : statAtLvl50 + 5;
@@ -282,19 +329,17 @@ const mapMoves = (pokemon) => {
   );
   const filteredMoves = allMoves
     .filter((move) => pokemon.moves.map((m) => m.move.name).includes(move.name))
-    .map((m) => {
-      return {
-        name: m.name,
-        type: m.type.name,
-        power: m.power,
-        accuracy: m.accuracy,
-        priority: m.priority,
-        damage_class: m.damage_class.name,
-        effect_chance: m.effect_chance,
-        ailment: { name: m.meta.ailment.name, chance: m.meta.ailment_chance },
-        category: m.meta.category.name,
-      };
-    })
+    .map((m) => ({
+      name: m.name,
+      type: m.type.name,
+      power: m.power,
+      accuracy: m.accuracy,
+      priority: m.priority,
+      damage_class: m.damage_class.name,
+      effect_chance: m.effect_chance,
+      ailment: { name: m.meta.ailment.name, chance: m.meta.ailment_chance },
+      category: m.meta.category.name,
+    }))
     .sort(() => 0.5 - Math.random());
   return filteredMoves.slice(
     0,
@@ -303,31 +348,26 @@ const mapMoves = (pokemon) => {
 };
 
 function mapPokemon(pokemon) {
-  const mappedPokemon = {};
-
-  mappedPokemon.name = pokemon.name;
-  mappedPokemon.level = 50;
-  mappedPokemon.types = mapTypes(pokemon);
-  mappedPokemon.stats = mapStats(pokemon);
-  mappedPokemon.moves = mapMoves(pokemon);
-  mappedPokemon.status = STATUS.NONE;
-
-  return mappedPokemon;
+  return {
+    name: pokemon.name,
+    level: 50,
+    types: mapTypes(pokemon),
+    stats: mapStats(pokemon),
+    moves: mapMoves(pokemon),
+    status: STATUS.NONE,
+  };
 }
 
 function fetchPokemonData() {
-  // Fetch Pokémon data from an external source
   const allPokemon = JSON.parse(
     fs.readFileSync("./common/pokemon_from_gens_i_and_ii_trimmed.json", {
       encoding: "utf-8",
     })
   );
-
-  return allPokemon.map((pokemon) => mapPokemon(pokemon));
+  return allPokemon.map(mapPokemon);
 }
 
 function generateRandomTeam(pokemonPool) {
-  // Generate a random Pokémon team of 6 unique Pokémon
   const shuffledPool = pokemonPool.sort(() => 0.5 - Math.random());
   return new PokemonTeam(shuffledPool.slice(0, 6));
 }
@@ -344,7 +384,7 @@ const gwoOptimization = (pokemonPool, numTeams, maxIterations) => {
   // fs.writeFileSync(
   //   "./log/teams.json",
   //   JSON.stringify(teams.map((team) => team.pokemonList))
-  // ); // Write only the Pokémon lists
+  // );
 
   let fitnessScores = new Array(numTeams).fill(0);
 
@@ -355,7 +395,7 @@ const gwoOptimization = (pokemonPool, numTeams, maxIterations) => {
       fitnessScores[i] = teams[i].fitness(opponentTeams);
     }
 
-    // Identify alpha, beta, delta teams
+    // Identify alpha, beta, and delta teams based on fitness scores
     const alphaIndex = fitnessScores.indexOf(Math.max(...fitnessScores));
     alphaTeam = teams[alphaIndex];
 
@@ -367,7 +407,7 @@ const gwoOptimization = (pokemonPool, numTeams, maxIterations) => {
     betaTeam = teams[sortedIndices[1]];
     deltaTeam = teams[sortedIndices[2]];
 
-    // Update the teams
+    // Update teams using crossover and mutation
     for (let i = 0; i < numTeams; i++) {
       if ([alphaIndex, sortedIndices[1], sortedIndices[2]].includes(i))
         continue;
@@ -398,7 +438,11 @@ const gwoOptimization = (pokemonPool, numTeams, maxIterations) => {
     console.log(
       `Iteration ${
         iteration + 1
-      }: Fitness scores: ${fitnessScores}, Alpha team: ${alphaTeam.pokemonList}`
+      }: Fitness scores: ${fitnessScores}, Alpha team: ${JSON.stringify(
+        alphaTeam.pokemonList,
+        null,
+        2
+      )}`
     );
   }
 
@@ -406,7 +450,7 @@ const gwoOptimization = (pokemonPool, numTeams, maxIterations) => {
   return alphaTeam;
 };
 
-// Define your Pokémon pool
+// Define your Pokémon pool and run the optimization
 const pokemonPool = fetchPokemonData();
 
 const numTeams = 100; // Number of teams
@@ -414,4 +458,4 @@ const maxIterations = 50; // Number of iterations
 
 const bestTeam = gwoOptimization(pokemonPool, numTeams, maxIterations);
 
-console.log("Best team:", bestTeam.pokemonList);
+console.log("Best team:", JSON.stringify(bestTeam.pokemonList, null, 2));
